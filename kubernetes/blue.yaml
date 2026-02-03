@@ -20,4 +20,4 @@ spec:
         - name: stockmanager
           image: 493800112687.dkr.ecr.eu-north-1.amazonaws.com/shopfront:14
           ports:
-            - containerPort: 8030
+            - containerPort: 8010
