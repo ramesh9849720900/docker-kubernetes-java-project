@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: stockmanager
-        image: <ECR_REPO>:<TAG>
+        image: shopfront:v1
         ports:
         - containerPort: 8030
