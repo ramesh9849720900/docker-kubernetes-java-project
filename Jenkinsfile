@@ -40,6 +40,17 @@ pipeline {
             }
         }
 
+        stage('Debug Kube Access') {
+            steps {
+                sh '''
+                whoami
+                kubectl config current-context
+                kubectl get nodes
+                '''
+            }
+        }
+
+
 
         stage('Green Deployment') {
             steps {
