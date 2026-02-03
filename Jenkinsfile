@@ -7,7 +7,7 @@ pipeline {
         APP_DIR = "shopfront"
         ECR_REPO = "493800112687.dkr.ecr.eu-north-1.amazonaws.com/shopfront"
         IMAGE_TAG = "${BUILD_NUMBER}"
-        APP_URL = "http://localhost:8030/health"
+        APP_URL = "http://localhost:8010/health"
     }
 
     stages {
