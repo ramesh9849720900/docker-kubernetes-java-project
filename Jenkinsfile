@@ -4,8 +4,8 @@ pipeline {
     agent any
 
     environment {
-        APP_DIR = "stockmanager"
-        ECR_REPO = "493800112687.dkr.ecr.eu-north-1.amazonaws.com/stockmanager"
+        APP_DIR = "shopfront"
+        ECR_REPO = "493800112687.dkr.ecr.eu-north-1.amazonaws.com/shopfront"
         IMAGE_TAG = "${BUILD_NUMBER}"
         APP_URL = "http://localhost:8030/health"
     }
