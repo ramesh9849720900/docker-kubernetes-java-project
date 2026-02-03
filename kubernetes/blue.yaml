@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: stockmanager
-        image: shopfront:v1
+        image: shopfront
         ports:
         - containerPort: 8030
