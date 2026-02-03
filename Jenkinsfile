@@ -29,11 +29,12 @@ pipeline {
             }
         }
 
-        stage('Health Check') {
+       stage('Health Check') {
             steps {
-                healthCheck(APP_URL)
+                healthCheck("stockmanager-blue")
             }
         }
+
 
         stage('Green Deployment') {
             steps {
