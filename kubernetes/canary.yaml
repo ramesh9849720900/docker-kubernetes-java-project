@@ -1,1 +1,22 @@
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockmanager-canary
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stockmanager
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: stockmanager
+        version: canary
+    spec:
+      containers:
+      - name: stockmanager
+        image: shopfront:v1
+        ports:
+        - containerPort: 8030
