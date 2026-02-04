@@ -20,4 +20,4 @@ spec:
       - name: stockmanager
         image: IMAGE_PLACEHOLDER
         ports:
-        - containerPort: 8030
+        - containerPort: 8080
