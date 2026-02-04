@@ -64,7 +64,14 @@ pipeline {
         '''
       }
     }
-*/    
+*/
+
+    stage('Create Service') {
+      steps {
+        sh 'kubectl apply -f kubernetes/service.yaml'
+      }
+    }
+
 
     stage('Switch Traffic to GREEN') {
       steps {
