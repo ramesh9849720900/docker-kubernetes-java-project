@@ -7,7 +7,7 @@ pipeline {
         APP_DIR = "shopfront"
         ECR_REPO = "493800112687.dkr.ecr.eu-north-1.amazonaws.com/shopfront"
         IMAGE_TAG = "${BUILD_NUMBER}"
-        APP_URL = "http://localhost:8010/health"
+        APP_URL = "http://localhost:8030/health"
     }
 
     stages {
@@ -33,9 +33,9 @@ pipeline {
             steps {
                 sh '''
                 kubectl rollout status deployment/stockmanager-blue --timeout=120s
-                kubectl port-forward deployment/stockmanager-blue 8010:8010 &
+                kubectl port-forward deployment/stockmanager-blue 8030:8030 &
                 sleep 10
-                curl -f http://localhost:8010/health
+                curl -f http://localhost:8030/health
                 '''
             }
         }
@@ -52,9 +52,9 @@ pipeline {
             steps {
                 sh '''
                 kubectl rollout status deployment/stockmanager-green --timeout=120s
-                kubectl port-forward deployment/stockmanager-green 8010:8010 &
+                kubectl port-forward deployment/stockmanager-green 8030:8030 &
                 sleep 10
-                curl -f http://localhost:8010/health
+                curl -f http://localhost:8030/health
                 '''
             }
         }
