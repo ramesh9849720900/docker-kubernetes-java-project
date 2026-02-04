@@ -15,6 +15,15 @@ pipeline {
       }
     }
 
+    stage('Build Application') {
+      steps {
+        sh '''
+        mvn clean package -DskipTests
+        '''
+      }
+    }
+
+
     stage('Build Docker Image') {
       steps {
         sh '''
