@@ -6,7 +6,7 @@ spec:
   type: LoadBalancer
   selector:
     app: stockmanager
-    version: blue   
+    version: green   
   ports:
   - port: 80
     targetPort: 8030
