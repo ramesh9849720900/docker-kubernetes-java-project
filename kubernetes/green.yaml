@@ -1,4 +1,3 @@
-/*
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,19 +15,9 @@ spec:
         version: green
     spec:
       imagePullSecrets:
-        - name: ecr-secret
+      - name: ecr-secret
       containers:
-        - name: stockmanager
-          image: 493800112687.dkr.ecr.eu-north-1.amazonaws.com/shopfront:14
-          ports:
-            - containerPort: 8030
-*/
-
-
-metadata:
-  name: stockmanager-green
-spec:
-  selector:
-    matchLabels:
-      app: stockmanager
-      version: green
+      - name: stockmanager
+        image: IMAGE_PLACEHOLDER
+        ports:
+        - containerPort: 8030
