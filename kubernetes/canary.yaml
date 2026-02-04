@@ -1,10 +1,9 @@
-/*
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stockmanager-canary
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: stockmanager
@@ -15,15 +14,10 @@ spec:
         app: stockmanager
         version: canary
     spec:
+      imagePullSecrets:
+      - name: ecr-secret
       containers:
       - name: stockmanager
-        image: shopfront:v1
+        image: IMAGE_PLACEHOLDER
         ports:
         - containerPort: 8030
-*/
-
-
-metadata:
-  name: stockmanager-canary
-spec:
-  replicas: 1
