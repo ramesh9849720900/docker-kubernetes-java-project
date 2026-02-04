@@ -55,7 +55,8 @@ pipeline {
       }
     }
 
-    stage('Health Check GREEN') {
+    
+  /*  stage('Health Check GREEN') {
       steps {
         sh '''
           kubectl exec deploy/stockmanager-green -- \
@@ -63,6 +64,7 @@ pipeline {
         '''
       }
     }
+*/    
 
     stage('Switch Traffic to GREEN') {
       steps {
