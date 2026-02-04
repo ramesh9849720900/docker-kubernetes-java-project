@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+/*apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stockmanager-blue
@@ -21,3 +21,13 @@ spec:
           image: 493800112687.dkr.ecr.eu-north-1.amazonaws.com/shopfront:14
           ports:
             - containerPort: 8010
+*/
+
+
+metadata:
+  name: stockmanager-blue
+spec:
+  selector:
+    matchLabels:
+      app: stockmanager
+      version: blue
