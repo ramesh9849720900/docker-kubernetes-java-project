@@ -40,6 +40,27 @@ pipeline {
             }
         }
 
+
+        stage('Green Deployment') {
+            steps {
+                k8sDeployBlueGreen("green")
+            }
+        }
+
+
+         stage('Health Check') {
+            steps {
+                sh '''
+                kubectl rollout status deployment/stockmanager-green --timeout=120s
+                kubectl port-forward deployment/stockmanager-green 8010:8010 &
+                sleep 10
+                curl -f http://localhost:8010/health
+                '''
+            }
+        }
+
+
+        
         stage('Debug Kube Access') {
             steps {
                 sh '''
@@ -50,13 +71,6 @@ pipeline {
             }
         }
 
-
-
-        stage('Green Deployment') {
-            steps {
-                k8sDeployBlueGreen("green")
-            }
-        }
 
         stage('Canary Deployment') {
             steps {
