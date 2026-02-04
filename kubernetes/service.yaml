@@ -9,5 +9,5 @@ spec:
     version: green   
   ports:
   - port: 80
-    targetPort: 8030
+    targetPort: 8080
 
