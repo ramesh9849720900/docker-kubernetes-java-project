@@ -1,79 +1,76 @@
-@Library('jenkins-shared-library') _
-
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        APP_DIR = "shopfront"
-        ECR_REPO = "493800112687.dkr.ecr.eu-north-1.amazonaws.com/shopfront"
-        IMAGE_TAG = "${BUILD_NUMBER}"
-        APP_URL = "http://localhost:8030/health"
+  environment {
+    AWS_REGION = "eu-north-1"
+    ECR_URL = "493800112687.dkr.ecr.eu-north-1.amazonaws.com/stockmanager"
+    IMAGE_TAG = "${BUILD_NUMBER}"
+  }
+
+  stages {
+
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
 
-    stages {
-        stage('Build App') {
-            steps {
-                buildApp(APP_DIR)
-            }
-        }
-
-        stage('Docker Build & Push') {
-            steps {
-                dockerBuildPush(APP_DIR, IMAGE_TAG, ECR_REPO)
-            }
-        }
-
-        stage('Blue Deployment') {
-            steps {
-                k8sDeployBlueGreen("blue")
-            }
-        }
-
-       /*stage('Health Check') {
-            steps {
-                sh '''
-                kubectl rollout status deployment/stockmanager-blue --timeout=120s
-                kubectl port-forward deployment/stockmanager-blue 8030:8030 &
-                sleep 10
-                curl -f http://localhost:8030/health
-                '''
-            }
-        }
-    */
-
-        stage('Green Deployment') {
-            steps {
-                k8sDeployBlueGreen("green")
-            }
-        }
-
-        stage('Health Check') {
-            steps {
-                sh '''
-                kubectl rollout status deployment/stockmanager-green --timeout=180s
-                kubectl exec deploy/stockmanager-green -- \
-                curl -f http://localhost:8030/health
-                '''
-            }
-        }
-
-
-        
-        stage('Debug Kube Access') {
-            steps {
-                sh '''
-                whoami
-                kubectl config current-context
-                kubectl get nodes
-                '''
-            }
-        }
-
-
-        stage('Canary Deployment') {
-            steps {
-                k8sDeployCanary()
-            }
-        }
+    stage('Build Docker Image') {
+      steps {
+        sh '''
+          docker build -t stockmanager:${IMAGE_TAG} .
+          docker tag stockmanager:${IMAGE_TAG} $ECR_URL:${IMAGE_TAG}
+        '''
+      }
     }
+
+    stage('Push to ECR') {
+      steps {
+        sh '''
+          aws ecr get-login-password --region $AWS_REGION \
+          | docker login --username AWS --password-stdin ${ECR_URL%/*}
+
+          docker push $ECR_URL:${IMAGE_TAG}
+        '''
+      }
+    }
+
+    stage('Deploy GREEN') {
+      steps {
+        sh '''
+          sed "s|IMAGE_PLACEHOLDER|$ECR_URL:${IMAGE_TAG}|g" kubernetes/green.yaml \
+          | kubectl apply -f -
+
+          kubectl rollout status deployment/stockmanager-green --timeout=180s
+        '''
+      }
+    }
+
+    stage('Health Check GREEN') {
+      steps {
+        sh '''
+          kubectl exec deploy/stockmanager-green -- \
+          curl -f http://localhost:8030/health
+        '''
+      }
+    }
+
+    stage('Switch Traffic to GREEN') {
+      steps {
+        sh '''
+          kubectl patch service stockmanager-svc \
+          -p '{"spec":{"selector":{"app":"stockmanager","version":"green"}}}'
+        '''
+      }
+    }
+  }
+
+  post {
+    failure {
+      echo "❌ Deployment failed – traffic NOT switched"
+    }
+    success {
+      echo "✅ Green deployment live"
+    }
+  }
 }
