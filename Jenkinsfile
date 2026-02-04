@@ -49,15 +49,13 @@ pipeline {
 
 
          stage('Health Check') {
-            steps {
-                sh '''
-                kubectl rollout status deployment/stockmanager-green --timeout=120s
-                kubectl port-forward deployment/stockmanager-green 8030:8030 &
-                sleep 10
-                curl -f http://localhost:8030/health
-                '''
-            }
-        }
+           sh '''
+           kubectl rollout status deployment/stockmanager-green --timeout=180s
+           kubectl exec deploy/stockmanager-green -- \
+           curl -f http://localhost:8030/health
+           '''
+         }
+
         
         stage('Debug Kube Access') {
             steps {
