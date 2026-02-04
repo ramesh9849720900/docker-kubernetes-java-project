@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockmanager
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stockmanager
+  template:
+    metadata:
+      labels:
+        app: stockmanager
+    spec:
+      imagePullSecrets:
+      - name: ecr-secret
+      containers:
+      - name: stockmanager
+        image: IMAGE_PLACEHOLDER
+        ports:
+        - containerPort: 8030
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8030
+          initialDelaySeconds: 20
+          periodSeconds: 5
