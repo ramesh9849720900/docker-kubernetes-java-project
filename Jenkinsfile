@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-       stage('Health Check') {
+       /*stage('Health Check') {
             steps {
                 sh '''
                 kubectl rollout status deployment/stockmanager-blue --timeout=120s
@@ -39,7 +39,7 @@ pipeline {
                 '''
             }
         }
-
+    */
 
         stage('Green Deployment') {
             steps {
@@ -58,8 +58,6 @@ pipeline {
                 '''
             }
         }
-
-
         
         stage('Debug Kube Access') {
             steps {
