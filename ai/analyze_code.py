@@ -1,23 +1,32 @@
 import os
 import json
-from transformers import pipeline
+
+issues = {}
 
 def analyze_code(folder):
-    analyzer = pipeline("text-generation", model="gpt2")
-    results = {}
-
     for root, _, files in os.walk(folder):
         for f in files:
             if f.endswith(".java") or f.endswith(".py"):
                 path = os.path.join(root, f)
-                with open(path, "r") as file:
+
+                with open(path) as file:
                     code = file.read()
 
-                ai_output = analyzer(f"Analyze this code: {code}", max_length=200)[0]['generated_text']
-                results[path] = ai_output
+                problems = []
 
-    with open("ai_output.json", "w") as out:
-        json.dump(results, out, indent=2)
+                if "System.out.println" in code:
+                    problems.append("Debug print found")
 
-if __name__ == "__main__":
-    analyze_code("src")
+                if "TODO" in code:
+                    problems.append("TODO comment found")
+
+                if len(code) > 5000:
+                    problems.append("File too large")
+
+                if problems:
+                    issues[path] = problems
+
+    with open("ai_report.json","w") as out:
+        json.dump(issues,out,indent=2)
+
+analyze_code("src")
