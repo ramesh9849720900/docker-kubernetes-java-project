@@ -18,7 +18,6 @@ pipeline {
     stage('AI Code Analysis') {
       steps {
         sh '''
-        pip3 install transformers torch --quiet
         python3 ai/analyze_code.py
         '''
       }
