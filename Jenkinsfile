@@ -15,6 +15,15 @@ pipeline {
       }
     }
 
+    stage('AI Code Analysis') {
+      steps {
+        sh '''
+        pip3 install transformers torch --quiet
+        python3 ai/analyze_code.py
+        '''
+      }
+    }
+
     stage('Build Application') {
       steps {
         sh '''
@@ -22,7 +31,6 @@ pipeline {
         '''
       }
     }
-
 
     stage('Build Docker Image') {
       steps {
@@ -55,23 +63,11 @@ pipeline {
       }
     }
 
-    
-  /*  stage('Health Check GREEN') {
-      steps {
-        sh '''
-          kubectl exec deploy/stockmanager-green -- \
-          curl -f http://localhost:8030/health
-        '''
-      }
-    }
-*/
-
     stage('Create Service') {
       steps {
         sh 'kubectl apply -f kubernetes/service.yaml'
       }
     }
-
 
     stage('Switch Traffic to GREEN') {
       steps {
